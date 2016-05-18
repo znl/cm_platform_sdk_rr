@@ -180,10 +180,6 @@ public class PerformanceManagerService extends SystemService {
                 "setPowerProfileInternal(profile=%d, fromUser=%b)",
                 profile, fromUser));
         }
-        if (mPm == null) {
-            Slog.e(TAG, "System is not ready, dropping profile request");
-            return false;
-        }
         if (profile < 0 || profile > mNumProfiles) {
             Slog.e(TAG, "Invalid profile: " + profile);
             return false;
@@ -252,12 +248,6 @@ public class PerformanceManagerService extends SystemService {
     }
 
     private void cpuBoostInternal(int duration) {
-        synchronized (PerformanceManagerService.this) {
-            if (mPm == null) {
-                Slog.e(TAG, "System is not ready, dropping cpu boost request");
-                return;
-            }
-        }
         if (duration > 0 && duration <= MAX_CPU_BOOST_TIME) {
             // Don't send boosts if we're in another power profile
             if (mCurrentProfile == PerformanceManager.PROFILE_POWER_SAVE ||
@@ -335,12 +325,6 @@ public class PerformanceManagerService extends SystemService {
 
         @Override
         public void launchBoost(int pid, String packageName) {
-            synchronized (PerformanceManagerService.this) {
-                if (mPm == null) {
-                    Slog.e(TAG, "System is not ready, dropping launch boost request");
-                    return;
-                }
-            }
             // Don't send boosts if we're in another power profile
             if (mCurrentProfile == PerformanceManager.PROFILE_POWER_SAVE ||
                     mCurrentProfile == PerformanceManager.PROFILE_HIGH_PERFORMANCE) {
